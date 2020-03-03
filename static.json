@@ -1,5 +1,9 @@
 {
   "root": "build/",
   "clean_urls": true,
-  "basic_auth": true
+  "basic_auth": true,
+  "https_only": true,
+  "routes": {
+    "/**": "index.html"
+  }
 }
