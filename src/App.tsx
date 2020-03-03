@@ -25,11 +25,13 @@ const apiClient = axios.create({
 
 const App = () => {
   const [chores, setChores] = useState([] as IChore[]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       const result = await apiClient.get('/chore');
       setChores(result.data);
+      setIsLoading(false);
     })();
   }, []);
 
@@ -105,7 +107,17 @@ const App = () => {
     });
   };
 
-  return <div className="chores">{renderChores()}</div>;
+  return isLoading ? (
+    <div className="spinner--wrap">
+      <div className="spinner">
+        <div className="bounce1"></div>
+        <div className="bounce2"></div>
+        <div className="bounce3"></div>
+      </div>
+    </div>
+  ) : (
+    <div className="chores">{renderChores()}</div>
+  );
 };
 
 export default App;
