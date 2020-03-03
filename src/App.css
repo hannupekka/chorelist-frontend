@@ -1,0 +1,73 @@
+.chores {
+  padding: 40px;
+  max-width: 800px;
+  margin: auto;
+}
+
+.chore {
+  padding: 20px 0;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+}
+
+.title code {
+  margin-right: 10px;
+}
+
+.title--left {
+  font-weight: bold;
+  display: flex;
+  flex: 1;
+}
+
+.title--right {
+  display: flex;
+  color: #555;
+  font-size: 0.8em;
+}
+
+.description {
+  color: #555;
+  margin-top: 10px;
+  font-size: 0.8em;
+  white-space: pre-wrap;
+}
+
+.schedule {
+  font-style: italic;
+  color: #555;
+  margin-top: 10px;
+  font-size: 0.8em;
+}
+
+.chore + .chore {
+  border-top: 1px solid #ddd;
+}
+
+.left {
+  flex: 1;
+}
+
+.button {
+  border: none;
+  font-size: 0.8em;
+  padding: 5px 10px;
+  border-radius: 50px;
+  color: #000;
+}
+
+.button:hover {
+  cursor: pointer;
+}
+
+.button--due {
+  color: #000;
+  background-color: lightgreen;
+}
+
+.button--late {
+  background-color: lightpink;
+}
