@@ -54,57 +54,98 @@ const App = () => {
   };
 
   const renderChores = () => {
-    return chores.map(chore => {
-      const { id, title, description, schedule, done_at } = chore;
-      const [, , day, month, weekday] = schedule.split(' ');
+    return chores
+      .sort((a: IChore, b: IChore) => {
+        const nextExecutionA = dayjs(
+          cronParser
+            .parseExpression(a.schedule, {
+              currentDate: dayjs(a.done_at)
+                .startOf('day')
+                .toDate(),
+            })
+            .next()
+            .toString()
+        )
+          .startOf('day')
+          .diff(new Date(), 'millisecond');
 
-      const lastExecution = dayjs(done_at)
-        .startOf('day')
-        .toDate();
+        const nextExecutionB = dayjs(
+          cronParser
+            .parseExpression(b.schedule, {
+              currentDate: dayjs(b.done_at)
+                .startOf('day')
+                .toDate(),
+            })
+            .next()
+            .toString()
+        )
+          .startOf('day')
+          .diff(new Date(), 'millisecond');
 
-      // Calculate next execution from the last execution.
-      const parsed = cronParser.parseExpression(schedule, { currentDate: lastExecution });
-      const nextExecution = dayjs(parsed.next().toString()).startOf('day');
-      const isDue = dayjs().isSame(nextExecution, 'day');
-      const isLate = dayjs().isAfter(nextExecution, 'day');
+        return nextExecutionA < nextExecutionB ? -1 : 1;
+      })
+      .map((chore: IChore) => {
+        const { id, title, description, schedule, done_at } = chore;
+        const [, , day, month, weekday] = schedule.split(' ');
 
-      const choreClasses = ['chore', ...[isDue && 'due'], ...[isLate && 'late']].filter(Boolean);
+        const lastExecution = dayjs(done_at)
+          .startOf('day')
+          .toDate();
 
-      return (
-        <div key={id} className={choreClasses.join(' ')}>
-          <div className="title">
-            <div className="title--left">
-              <code>
-                {day} {month} {weekday}
-              </code>
-              {title}
+        // Calculate next execution from the last execution.
+        const parsed = cronParser.parseExpression(schedule, { currentDate: lastExecution });
+        const nextExecution = dayjs(parsed.next().toString()).startOf('day');
+        const isDue = dayjs().isSame(nextExecution, 'day');
+        const isLate = dayjs().isAfter(nextExecution, 'day');
+
+        const choreClasses = ['chore', ...[!isDue && 'due'], ...[isLate && 'late']].filter(Boolean);
+
+        return (
+          <div key={id} className={choreClasses.join(' ')}>
+            <div className="title">
+              <div className="title--left">{title}</div>
+              <div className="title--right">
+                {(isDue || isLate) && (
+                  <button
+                    onClick={() => handleChore(id)}
+                    className={`button button--${isDue ? 'due' : 'late'}`}
+                  >
+                    {isDue ? 'Today' : 'Late'}
+                  </button>
+                )}
+              </div>
             </div>
-            <div className="title--right">
-              {(isDue || isLate) && (
-                <button
-                  onClick={() => handleChore(id)}
-                  className={`button button--${isDue ? 'due' : 'late'}`}
-                >
-                  {isDue ? 'Today' : 'Late'}
-                </button>
-              )}
+            {description && (
+              <div className="description">
+                <Linkify>{description}</Linkify>
+              </div>
+            )}
+            <div className="schedule">
+              <div className="schedule--left">
+                <span className="crontab">
+                  <code className="prefix">Day</code>
+                  <code>{day}</code>
+                </span>
+                <span className="crontab">
+                  <code className="prefix">Month</code>
+                  <code>{month}</code>
+                </span>
+                <span className="crontab">
+                  <code className="prefix">Weekday</code>
+                  <code>{weekday}</code>
+                </span>
+              </div>
+              <div className="schedule--right">
+                Last done{' '}
+                {dayjs(done_at)
+                  .startOf('day')
+                  .format('D.M.YYYY')}{' '}
+                and {isLate ? 'was' : 'is'} due {formatNextExecution(nextExecution)}
+              </div>
             </div>
           </div>
-          {description && (
-            <div className="description">
-              <Linkify>{description}</Linkify>
-            </div>
-          )}
-          <div className="schedule">
-            Last done{' '}
-            {dayjs(done_at)
-              .startOf('day')
-              .format('D.M.YYYY')}{' '}
-            and {isLate ? 'was' : 'is'} due {formatNextExecution(nextExecution)}
-          </div>
-        </div>
-      );
-    });
+        );
+      });
   };
 
   return isLoading ? (
