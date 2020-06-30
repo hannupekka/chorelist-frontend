@@ -94,9 +94,14 @@ const App = () => {
 
         // Calculate next execution from the last execution.
         const parsed = cronParser.parseExpression(schedule, { currentDate: lastExecution });
-        const nextExecution = dayjs(parsed.next().toString())
-          .add(1, 'day')
-          .startOf('day');
+        const nextScheduledExecution = dayjs(parsed.next().toString()).startOf('day');
+
+        // Check if chore has alreade been done today.
+        const alreadyDoneToday = dayjs(lastExecution).isSame(nextScheduledExecution, 'day');
+        const nextExecution = alreadyDoneToday
+          ? dayjs(parsed.next().toString()).startOf('day')
+          : nextScheduledExecution;
+
         const isDue = dayjs().isSame(nextExecution, 'day');
         const isLate = dayjs().isAfter(nextExecution, 'day');
 
