@@ -94,10 +94,6 @@ const App = () => {
                 <code className="prefix">Month</code>
                 <code>{month}</code>
               </span>
-              <span className="crontab">
-                <code className="prefix">Weekday</code>
-                <code>{weekday}</code>
-              </span>
             </div>
             <div className="schedule--right">
               Last done{' '}
