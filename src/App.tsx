@@ -14,6 +14,7 @@ interface IChore {
   schedule: string;
   done_at: string;
   next_at: string;
+  snooze_until?: string;
 }
 
 const apiClient = axios.create({
@@ -45,6 +46,16 @@ const App = () => {
     setChores(result.data);
   };
 
+  const handleSnooze = async (id: number) => {
+    if (!window.confirm('Snooze this chore 2 weeks?')) {
+      return;
+    }
+
+    await apiClient.patch(`/chore/${id}/snooze/2`);
+    const result = await apiClient.get('/chore');
+    setChores(result.data);
+  };
+
   const formatNextExecution = (date: dayjs.Dayjs) => {
     if (dayjs().isSame(date, 'day')) {
       return 'today!';
@@ -55,8 +66,8 @@ const App = () => {
 
   const renderChores = () => {
     return chores.map((chore: IChore) => {
-      const { id, title, description, schedule, done_at, next_at } = chore;
-      const [, , day, month, weekday] = schedule.split(' ');
+      const { id, title, description, schedule, done_at, next_at, snooze_until } = chore;
+      const [, , day, month] = schedule.split(' ');
 
       const nextExecution = dayjs(next_at);
       const isDue = dayjs().isSame(nextExecution, 'day');
@@ -69,13 +80,26 @@ const App = () => {
           <div className="title">
             <div className="title--left">{title}</div>
             <div className="title--right">
-              {(isDue || isLate) && (
-                <button
-                  onClick={() => handleChore(id)}
-                  className={`button button--${isDue ? 'due' : 'late'}`}
-                >
-                  {isDue ? 'Today' : 'Late'}
+              {snooze_until && (
+                <button className={`button button--snooze`} onClick={() => handleChore(id)}>
+                  Snoozed until{' '}
+                  {dayjs(snooze_until)
+                    .startOf('day')
+                    .format('D.M.YYYY')}
                 </button>
+              )}
+              {(isDue || isLate) && !snooze_until && (
+                <>
+                  <button onClick={() => handleSnooze(id)} className={`button button--snooze`}>
+                    Snooze
+                  </button>
+                  <button
+                    onClick={() => handleChore(id)}
+                    className={`button button--${isDue ? 'due' : 'late'}`}
+                  >
+                    {isDue ? 'Today' : 'Late'}
+                  </button>
+                </>
               )}
             </div>
           </div>
