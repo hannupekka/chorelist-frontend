@@ -82,7 +82,7 @@ const App = () => {
             <div className="title--right">
               {snooze_until && (
                 <button className={`button button--snooze`} onClick={() => handleChore(id)}>
-                  Snoozed until{' '}
+                  Snoozed{' '}
                   {dayjs(snooze_until)
                     .startOf('day')
                     .format('D.M.YYYY')}

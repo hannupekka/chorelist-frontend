@@ -1,5 +1,5 @@
 .chores {
-  padding: 40px;
+  padding: 0 20px;
   max-width: 800px;
   margin: auto;
 }
@@ -10,10 +10,11 @@
 
 .title {
   display: flex;
-  flex-direction: column;
+  align-items: center;
 }
 
 .title--left {
+  font-size: 0.8em;
   font-weight: bold;
   display: flex;
   flex: 1;
@@ -22,11 +23,7 @@
 .title--right {
   display: flex;
   color: #555;
-  font-size: 0.8em;
-}
-
-.title--right:not(:empty) {
-  margin-top: 8px;
+  font-size: 0.7em;
 }
 
 .title--right > * + * {
@@ -36,7 +33,7 @@
 .description {
   color: #555;
   margin-top: 20px;
-  font-size: 0.8em;
+  font-size: 0.7em;
   white-space: pre-wrap;
 }
 
@@ -49,7 +46,7 @@
 }
 
 .schedule--right {
-  font-size: 0.8em;
+  font-size: 0.7em;
   font-style: italic;
   color: #555;
   margin-top: 20px;
@@ -67,7 +64,7 @@
   font-family: 'Arial';
   line-height: normal;
   border: none;
-  font-size: 0.8em;
+  font-size: 0.9em;
   padding: 5px 10px;
   border-radius: 50px;
   color: #000;
@@ -152,12 +149,8 @@
 }
 
 @media screen and (min-width: 768px) {
-  .title {
-    flex-direction: row;
-  }
-
-  .title--right {
-    margin-top: 0;
+  .chores {
+    padding: 40px;
   }
 
   .schedule {
