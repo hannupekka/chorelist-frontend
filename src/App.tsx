@@ -72,6 +72,7 @@ const App = () => {
       const nextExecution = dayjs(next_at);
       const isDue = dayjs().isSame(nextExecution, 'day');
       const isLate = dayjs().isAfter(nextExecution, 'day');
+      const isSnoozed = snooze_until && dayjs().isBefore(snooze_until, 'day');
 
       const choreClasses = ['chore', ...[!isDue && 'due'], ...[isLate && 'late']].filter(Boolean);
 
@@ -80,7 +81,7 @@ const App = () => {
           <div className="title">
             <div className="title--left">{title}</div>
             <div className="title--right">
-              {snooze_until && (
+              {isSnoozed && (
                 <button className={`button button--snooze`} onClick={() => handleChore(id)}>
                   Snoozed{' '}
                   {dayjs(snooze_until)
@@ -88,7 +89,7 @@ const App = () => {
                     .format('D.M.YYYY')}
                 </button>
               )}
-              {(isDue || isLate) && !snooze_until && (
+              {!isSnoozed && (isDue || isLate) && (
                 <>
                   <button onClick={() => handleSnooze(id)} className={`button button--snooze`}>
                     Snooze
